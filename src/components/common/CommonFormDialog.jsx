@@ -5,6 +5,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import BWInput from './Input';
 import BWButton from './Button';
+import Alert from '@mui/material/Alert';
 
 const CommonFormDialog = ({
   open,
@@ -16,12 +17,14 @@ const CommonFormDialog = ({
   title,
   submitLabel = 'Submit',
   cancelLabel = 'Cancel',
+  error,
   ...props
 }) => (
   <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
     <DialogTitle>{title}</DialogTitle>
     <form onSubmit={onSubmit}>
       <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
+        {error && <Alert severity="error" sx={{ mb: 1 }}>{error}</Alert>}
         {fields.map((field) => (
           <BWInput
             key={field.name}
