@@ -1,12 +1,59 @@
-# React + Vite
+# Wazeefa Technologies Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend for the Wazeefa Technologies student management Dashboard, built with React, Redux Toolkit, Material-UI, and Vite.
 
-Currently, two official plugins are available:
+## Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [Node.js](https://nodejs.org/) (v16 or higher recommended)
+- [npm](https://www.npmjs.com/) (comes with Node.js)
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 1. Clone the Repository
+
+```
+git clone https://github.com/bijithkk/wazeefa_frontend.git
+cd frontend
+```
+
+### 2. Install Dependencies
+
+```
+npm install
+```
+
+### 3. Start the Development Server
+
+```
+npm run dev
+```
+
+- The app will be available at [http://localhost:5173](http://localhost:5173) by default.
+
+### 4. Build for Production
+
+```
+npm run build
+```
+- The production-ready files will be in the `dist/` directory.
+
+## Project Structure
+
+- `src/` — Main source code (components, pages, Redux logic, styles)
+- `public/` — Static assets
+- `index.html` — Main HTML file
+- `vite.config.js` — Vite configuration
+
+## Features
+- Superadmin and staff authentication
+- Role-based dashboard and permissions
+- Staff and student CRUD operations
+- Responsive Material-UI design
+- Toast notifications for actions and errors
+
+## Environment Variables
+If you need to change API endpoints or add environment variables, create a `.env` file in the root directory.
+```
+
+## Support
+If you have any issues or questions, please contact the project maintainer or open an issue in the repository.
