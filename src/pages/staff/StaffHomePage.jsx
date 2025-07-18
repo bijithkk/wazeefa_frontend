@@ -46,6 +46,7 @@ const StaffHomePage = () => {
   const [editStudentId, setEditStudentId] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState(null);
+  const [studentFormError, setStudentFormError] = useState('');
 
   useEffect(() => {
     if (permissions.view) {
@@ -61,11 +62,13 @@ const StaffHomePage = () => {
 
   const handleOpenAddDialog = () => {
     setForm({ name: '', age: '', grade: '', contactInfo: '' });
+    setStudentFormError('');
     setAddDialogOpen(true);
   };
 
   const handleCloseAddDialog = () => {
     setAddDialogOpen(false);
+    setStudentFormError('');
   };
 
   const handleOpenEditDialog = (student) => {
@@ -76,12 +79,14 @@ const StaffHomePage = () => {
       contactInfo: student.contactInfo || '',
     });
     setEditStudentId(student._id || student.id);
+    setStudentFormError('');
     setEditDialogOpen(true);
   };
 
   const handleCloseEditDialog = () => {
     setEditDialogOpen(false);
     setEditStudentId(null);
+    setStudentFormError('');
   };
 
   const handleOpenDeleteDialog = (student) => {
@@ -96,11 +101,26 @@ const StaffHomePage = () => {
 
   const handleFormChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setStudentFormError('');
   };
 
   // Add student (if allowed)
   const handleAddStudent = async (e) => {
     e.preventDefault();
+    // Validation
+    if (!form.name || !form.age || !form.grade || !form.contactInfo) {
+      setStudentFormError('All fields are required');
+      return;
+    }
+    if (/^\d+$/.test(form.name)) {
+      setStudentFormError('Please enter a valid name');
+      return;
+    }
+    if (!/^\d{10}$/.test(form.contactInfo)) {
+      setStudentFormError('Please enter a valid phone number');
+      return;
+    }
+    setStudentFormError('');
     try {
       await dispatch(addStudent(form)).unwrap();
       setAddDialogOpen(false);
@@ -114,6 +134,20 @@ const StaffHomePage = () => {
   // Edit student (if allowed)
   const handleEditStudent = async (e) => {
     e.preventDefault();
+    // Validation
+    if (!form.name || !form.age || !form.grade || !form.contactInfo) {
+      setStudentFormError('All fields are required');
+      return;
+    }
+    if (/^\d+$/.test(form.name)) {
+      setStudentFormError('Please enter a valid name');
+      return;
+    }
+    if (!/^\d{10}$/.test(form.contactInfo)) {
+      setStudentFormError('Please enter a valid phone number');
+      return;
+    }
+    setStudentFormError('');
     try {
       await dispatch(updateStudent({ id: editStudentId, updateData: form })).unwrap();
       setEditDialogOpen(false);
@@ -245,6 +279,7 @@ const StaffHomePage = () => {
         title="Add Student"
         submitLabel={staffLoading ? <CircularProgress size={20} /> : 'Submit'}
         cancelLabel="Cancel"
+        error={studentFormError}
       />
       <CommonFormDialog
         open={editDialogOpen}
@@ -256,6 +291,7 @@ const StaffHomePage = () => {
         title="Edit Student"
         submitLabel={staffLoading ? <CircularProgress size={20} /> : 'Update'}
         cancelLabel="Cancel"
+        error={studentFormError}
       />
       <DeleteDialog
         open={deleteDialogOpen}

@@ -53,6 +53,7 @@ const StaffPage = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [staffToDelete, setStaffToDelete] = useState(null);
   const [editPermissions, setEditPermissions] = useState({ view: false, edit: false, create: false, delete: false });
+  const [addStaffError, setAddStaffError] = useState('');
 
   useEffect(() => {
     dispatch(fetchAllStaff());
@@ -106,6 +107,7 @@ const StaffPage = () => {
 
   const handleCloseAddDialog = () => {
     setAddDialogOpen(false);
+    setAddStaffError('');
   };
 
   const handleOpenEditDialog = (staff) => {
@@ -123,16 +125,40 @@ const StaffPage = () => {
   const handleCloseEditDialog = () => {
     setEditDialogOpen(false);
     setEditStaffId(null);
+    setAddStaffError('');
   };
 
   const handleFormChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setAddStaffError(''); // Clear error on input change
   };
 
   const handleAddStaff = async (e) => {
     e.preventDefault();
-    if (!form.username || !form.email || !form.password || !form.passwordConfirm) return;
-    if (form.password !== form.passwordConfirm) return;
+    if (!form.username || !form.email || !form.password || !form.passwordConfirm) {
+      setAddStaffError('All fields are required');
+      return;
+    }
+    // Username must not be a number
+    if (/^\d+$/.test(form.username)) {
+      setAddStaffError('Please enter a valid name');
+      return;
+    }
+    // Simple email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      setAddStaffError('Please enter a valid email address');
+      return;
+    }
+    if (form.password !== form.passwordConfirm) {
+      setAddStaffError('Passwords do not match');
+      return;
+    }
+    if (form.password.length < 8) {
+      setAddStaffError('Passwords must atleast 8 characters');
+      return;
+    }
+    setAddStaffError('');
     try {
       await dispatch(addStaff({
         username: form.username,
@@ -153,8 +179,26 @@ const StaffPage = () => {
 
   const handleEditStaff = async (e) => {
     e.preventDefault();
-    if (!form.username || !form.email) return;
-    if (form.password && form.password !== form.passwordConfirm) return;
+    if (!form.username || !form.email) {
+      setAddStaffError('All fields are required');
+      return;
+    }
+    // Username must not be a number
+    if (/^\d+$/.test(form.username)) {
+      setAddStaffError('Please enter a valid name');
+      return;
+    }
+    // Simple email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      setAddStaffError('Please enter a valid email address');
+      return;
+    }
+    if (form.password && form.password !== form.passwordConfirm) {
+      setAddStaffError('Passwords do not match');
+      return;
+    }
+    setAddStaffError('');
     try {
       const updateData = {
         username: form.username,
@@ -311,6 +355,7 @@ const StaffPage = () => {
         title="Add Staff"
         submitLabel={loading ? <CircularProgress size={20} /> : 'Submit'}
         cancelLabel="Cancel"
+        error={addStaffError}
       />
       <CommonFormDialog
         open={editDialogOpen}
@@ -322,6 +367,7 @@ const StaffPage = () => {
         title="Edit Staff"
         submitLabel={loading ? <CircularProgress size={20} /> : 'Update'}
         cancelLabel="Cancel"
+        error={addStaffError}
       >
         <Box sx={{ mt: 2 }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>Permissions</Typography>

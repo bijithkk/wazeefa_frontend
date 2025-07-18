@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 
 const SuperAdminForm = ({ mode, onModeChange }) => {
   const [form, setForm] = useState({ email: '', password: '', passwordConfirm: '', username: '' });
+  const [localError, setLocalError] = useState('');
   const dispatch = useDispatch();
   const { loading, error, user, token } = useSelector((state) => state.auth);
   const navigate = useNavigate();
@@ -24,13 +25,18 @@ const SuperAdminForm = ({ mode, onModeChange }) => {
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setLocalError(''); // Clear local error on input change
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (mode === 'signup') {
       if (!form.username || !form.email || !form.password || !form.passwordConfirm) return;
-      if (form.password !== form.passwordConfirm) return;
+      if (form.password !== form.passwordConfirm) {
+        setLocalError('Passwords do not match');
+        return;
+      }
+      setLocalError('');
       dispatch(signupSuperadmin({ username: form.username, email: form.email, password: form.password }))
         .unwrap()
         .then(() => {
@@ -55,6 +61,7 @@ const SuperAdminForm = ({ mode, onModeChange }) => {
       {mode === 'signup' && (
         <BWInput label="Confirm Password" name="passwordConfirm" type="password" value={form.passwordConfirm} onChange={handleChange} required />
       )}
+      {localError && <Alert severity="error" sx={{ mb: 2 }}>{localError}</Alert>}
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
       <BWButton fullWidth type="submit" disabled={loading}>
         {loading ? <CircularProgress size={24} /> : mode === 'login' ? 'Login' : 'Sign Up'}
